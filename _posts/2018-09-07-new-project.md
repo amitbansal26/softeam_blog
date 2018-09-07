@@ -9,13 +9,13 @@ toc: false
 
 L'objectif de cet article est de donner les étapes de mise en place d'une Application dans notre Usine.
 
-## Construction & Déploiement des Applications 
+## Construction & Déploiement des Applications
 
 Les sources de nos projets sont gérés dans l'organisation GitHub [SofteamOuest](https://github.com/SofteamOuest/).
 
 Notre [Jenkins](jenkins.k8.wildwidewest.xyz) se synchronise automatiquement avec cette organisation.
 
-* Dès qu'un dépôt est créé sur GitHub, Jenkins crée un Job pour construire et déployer l'Application (Définition du Job basé sur le Jenkinsfile s'il existe)
+* Dès qu'un dépôt est créé sur GitHub, Jenkins crée un Job pour construire et déployer l'Application (définition du Job basée sur le Jenkinsfile s'il existe)
 
 Le Job jenkins :
 
@@ -25,7 +25,7 @@ Le Job jenkins :
 
 La fin d'exécution du Job Jenkins déclenche le déploiement de l'Application (par exécution du Job [chart-run](https://jenkins.k8.wildwidewest.xyz/job/SofteamOuest/job/chart-run/)) sur le cluster.
 
-## Mise en place d'une Application
+## Mise en place du déploiement
 
 Pour mettre en place le déploiement sur le cluster, il faut :
 
@@ -75,11 +75,13 @@ docker-compose build
 ```
 
 Pour démarrer les services :
+
 ```bash
 docker-compose up
 ```
 
 Pour arrêter les services :
+
 ```bash
 docker-compose stop
 ```
@@ -125,7 +127,7 @@ Et finalement modifier les fichiers générés (cf. sections ci-dessous).
 
 Liste des Modifications :
 
-* Le nom de l'image docker 
+* Le nom de l'image docker
 
   * Le même nom que celui utilisé dans le docker-compose.yml
 * La conf SSL de l'Application (si Application accessible en dehors du Cluster)
@@ -257,7 +259,7 @@ podTemplate(label: 'monappli-pod', containers: [
         container('maven') {
 
             stage('build sources') {
-                sh 'mvn clean install -DskipTests sonar:sonar -Dsonar.host.url=http://sonarqube-sonarqube:9000 -Dsonar.java.binaries=target'
+                sh 'mvn clean install sonar:sonar -Dsonar.host.url=http://sonarqube-sonarqube:9000 -Dsonar.java.binaries=target'
             }
         }
 
@@ -298,7 +300,7 @@ podTemplate(label: 'monappli-pod', containers: [
 
 ## Vérification du Déploiement
 
-Pour vérifier l'état du déploiement, il faut vérifier l'état du Job [chart-run](https://jenkins.k8.wildwidewest.xyz/job/SofteamOuest/job/chart-run/). 
+Pour vérifier l'état du déploiement, il faut vérifier l'état du Job [chart-run](https://jenkins.k8.wildwidewest.xyz/job/SofteamOuest/job/chart-run/).
 
 Ensuite, il faut se connecter en SSH sur le master (du cluster) pour vérifier l'état du Pod "monappli" (qui est déployée dans le namespace dev)
 
@@ -308,7 +310,7 @@ NAME                           READY     STATUS    RESTARTS   AGE
 monappli-7bf958b897-ts9fc   1/1       Running   0          2h
 ```
 
-Si l'option *ingress.enabled* est définie à true dans le package helm, l'application doit être accessible par internet. 
+Si l'option *ingress.enabled* est définie à true dans le package helm, l'application doit être accessible par internet.
 
 L'URL d'accès est le nom de l'application suivi du nom de l'environnement (ici dev) suivi de k8.wildwidewest.xyz.
 
