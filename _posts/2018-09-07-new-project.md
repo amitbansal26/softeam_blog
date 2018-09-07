@@ -4,7 +4,7 @@ date: 2018-09-07 00:00:00 Z
 layout: post
 author: Mehdi EL KOUHEN
 description: Mise en place d'un nouveau Projet dans l'Usine
-excerpt_separator: "<!--more-->"
+toc: false
 ---
 
 L'objectif de cet article est de donner les étapes de mise en place d'une Application dans notre Usine.
@@ -44,7 +44,7 @@ Remarque : Ne pas préfixer les noms des applications avec des mots génériques
 
 Exemple de Dockerfile pour une application java.
 
-```
+```Dockerfile
 FROM java:9
 
 MAINTAINER XXX@softeam.fr
