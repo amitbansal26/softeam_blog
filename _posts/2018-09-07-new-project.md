@@ -1,6 +1,6 @@
 ---
 title: Mise en place d'un nouveau Projet dans l'Usine
-date: 2018-09-07
+date: 2018-09-07 00:00:00 Z
 layout: post
 author: Mehdi EL KOUHEN
 description: Mise en place d'un nouveau Projet dans l'Usine
