@@ -111,15 +111,15 @@ services:
 
 Les charts Helm du Projet sont gérés dans le dépôt GIT [charts](https://github.com/SofteamOuest/charts).
 
-Il faut installer [Helm](https://docs.helm.sh/using_helm/#installing-helm) sur le Poste de Développement.
+Il faut d'abord installer [Helm](https://docs.helm.sh/using_helm/#installing-helm) sur le Poste de Développement.
 
-Pour créer un chart helm il suffit d'exécuter à la racine du dépôt.
+Puis, pour créer un chart helm il suffit d'exécuter à la racine du dépôt [charts](https://github.com/SofteamOuest/charts).
 
 ```bash
 helm create monappli
 ```
 
-Puis modifier les fichiers générés (cf. sections ci-dessous).
+Et finalement modifier les fichiers générés (cf. sections ci-dessous).
 
 #### Fichier values.yaml
 
