@@ -7,6 +7,8 @@ description: Mise en place d'un nouveau Projet dans l'Usine
 excerpt_separator: "<!--more-->"
 ---
 
+L'objectif de cet article est de donner les étapes de mise en place d'une Application dans notre Usine.
+
 ## Construction & Déploiement des Applications 
 
 Les sources de nos projets sont gérés dans l'organisation GitHub [SofteamOuest](https://github.com/SofteamOuest/).
@@ -38,7 +40,7 @@ Le nom du domaine fonctionnel peut être par exemple le nom de la ressource gér
 
 Remarque : Ne pas préfixer les noms des applications avec des mots génériques comme "gestion".
 
-## Création du Dockerfile
+### Création du Dockerfile
 
 Exemple de Dockerfile pour une application java.
 
@@ -56,7 +58,7 @@ EXPOSE 8080
 CMD java -jar monappli.jar 
 ```
 
-## Création du docker-compose.yml
+### Création du docker-compose.yml
 
 Le docker-compose.yml simplifie la gestion des services docker.
 
@@ -99,7 +101,7 @@ services:
     - "8080:8080"
 ```
 
-## Création du package helm
+### Création du package helm
 
 Les charts Helm du Projet sont gérés dans le dépôt GIT [charts](https://github.com/SofteamOuest/charts).
 
@@ -113,7 +115,7 @@ helm create monappli
 
 Puis modifier les fichiers générés (cf. sections ci-dessous).
 
-### Fichier values.yaml
+#### Fichier values.yaml
 
 Liste des Modifications :
 
@@ -152,7 +154,7 @@ resources:
 ...  
 ```
 
-### Fichier deployment.yaml
+#### Fichier deployment.yaml
 
 Liste des modifications :
 
@@ -170,7 +172,7 @@ Liste des modifications :
       - name: regsecret
 ```
 
-## Release du package helm
+### Release du package helm
 
 Pour qu'une version d'un package helm soit *visible* du cluster, il faut construire une version du package et le publier dans le repo helm.
 
@@ -200,7 +202,7 @@ Effectuer la release.
 sh ./release.sh
 ```
 
-## Création du Jenkinsfile
+### Création du Jenkinsfile
 
 La définition du Job Jenkins se fait via un Jenkinsfile (remplacer *monappli* par le vrai nom de l'Application).
 
@@ -290,14 +292,20 @@ podTemplate(label: 'monappli-pod', containers: [
 
 ## Vérification du Déploiement
 
-Après déploiement, se connecter en SSH sur le master (du cluster).
+Pour vérifier l'état du déploiement, il faut vérifier l'état du Job [chart-run](https://jenkins.k8.wildwidewest.xyz/job/SofteamOuest/job/chart-run/). 
 
-Vérifier l'état du Pod "monappli"
+Ensuite, il faut se connecter en SSH sur le master (du cluster) pour vérifier l'état du Pod "monappli" (qui est déployée dans le namespace dev)
 
 ```bash
-[root@vps242131 ~]# kubectl get pod -l app=monappli -n dev
+[root@vps242131 ~]# kubectl get pod -l app=monappli --namespace dev
 NAME                           READY     STATUS    RESTARTS   AGE
 monappli-7bf958b897-ts9fc   1/1       Running   0          2h
 ```
 
-Pour se connecter en SSH au cluster, il faut fournir à Mehdi une clef SSH publique pour qu'il l'enregistre dans les clefs autorisées par l'Usine. 
+Si l'option *ingress.enabled* est définie à true dans le package helm, l'application doit être accessible par internet. 
+
+L'URL d'accès est le nom de l'application suivi du nom de l'environnement (ici dev) suivi de k8.wildwidewest.xyz.
+
+* L'URL de l'appli est https://monappli-dev.k8.wildwidewest.xyz
+
+Pour se connecter en SSH au cluster, il faut fournir à Mehdi une clef SSH publique pour qu'il l'enregistre dans les clefs autorisées par l'Usine.
