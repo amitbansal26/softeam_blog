@@ -17,7 +17,13 @@ Notre [Jenkins](jenkins.k8.wildwidewest.xyz) se synchronise automatiquement avec
 
 * Dès qu'un dépôt est créé sur GitHub, Jenkins crée un Job pour construire et déployer l'Application (Définition du Job basé sur le Jenkinsfile s'il existe)
 
-La fin de construction d'un Job Jenkins trigger le déploiement de l'Application (par exécution du Job [chart-run](https://jenkins.k8.wildwidewest.xyz/job/SofteamOuest/job/chart-run/)).
+Le Job jenkins 
+
+* Analyse la qualité du code de l'application (via [sonarqube](https://sonarqube.k8.wildwidewest.xyz/)
+* Construit les images Docker de l'Application
+* Déploie les images Docker sur [nexus](https://nexus.k8.wildwidewest.xyz/)
+
+La fin d'exécution du Job Jenkins déclenche le déploiement de l'Application (par exécution du Job [chart-run](https://jenkins.k8.wildwidewest.xyz/job/SofteamOuest/job/chart-run/)) sur le cluster.
 
 ## Mise en place d'une Application
 
@@ -41,6 +47,8 @@ Le nom du domaine fonctionnel peut être par exemple le nom de la ressource gér
 Remarque : Ne pas préfixer les noms des applications avec des mots génériques comme "gestion".
 
 ### Création du Dockerfile
+
+Le Dockerfile permet de construire l'image Docker de l'application.
 
 Exemple de Dockerfile pour une application java.
 
