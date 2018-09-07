@@ -17,9 +17,9 @@ Notre [Jenkins](jenkins.k8.wildwidewest.xyz) se synchronise automatiquement avec
 
 * Dès qu'un dépôt est créé sur GitHub, Jenkins crée un Job pour construire et déployer l'Application (Définition du Job basé sur le Jenkinsfile s'il existe)
 
-Le Job jenkins 
+Le Job jenkins :
 
-* Analyse la qualité du code de l'application (via [sonarqube](https://sonarqube.k8.wildwidewest.xyz/)
+* Analyse la qualité du code de l'application (via [sonarqube](https://sonarqube.k8.wildwidewest.xyz/))
 * Construit les images Docker de l'Application
 * Déploie les images Docker sur [nexus](https://nexus.k8.wildwidewest.xyz/)
 
@@ -27,9 +27,7 @@ La fin d'exécution du Job Jenkins déclenche le déploiement de l'Application (
 
 ## Mise en place d'une Application
 
-L'environnement de déploiement est un cluster Kubernetes.
-
-Pour mettre en place le déploiement, il faut donc :
+Pour mettre en place le déploiement sur le cluster, il faut :
 
 * Intégrer au Projet, un Dockerfile pour construire l'image (ou les images de l'Application)
 * Intégrer au Projet, un docker-compose.yml pour simplifier le démarrage de l'Application sur le Poste de Dev.
@@ -68,7 +66,7 @@ CMD java -jar monappli.jar
 
 ### Création du docker-compose.yml
 
-Le docker-compose.yml simplifie la gestion des services docker.
+Le docker-compose.yml simplifie la gestion des services docker. Il est aussi utilisé par le Jenkinsfile pour simplifier la construction des images Docker et leur *push* sur nexus.
 
 Pour construire les images Docker (de l'Application) :
 
