@@ -158,7 +158,7 @@ resources:
 
 Liste des modifications :
 
-* Intégrer le nom du secret Kubernetes contenant le login/mot de Nexus (pour le download des images Docker)  
+* Intégrer le nom du secret Kubernetes (regsecret)contenant le login/mot de Nexus (nécessaire pour le download des images Docker)  
 
 ```yaml
     spec:
