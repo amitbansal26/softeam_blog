@@ -44,7 +44,7 @@ Remarque : Ne pas préfixer les noms des applications avec des mots génériques
 
 Exemple de Dockerfile pour une application java.
 
-```Dockerfile
+```bash
 FROM java:9
 
 MAINTAINER XXX@softeam.fr
