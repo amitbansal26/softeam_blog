@@ -7,29 +7,40 @@ description: Mise en place d'un nouveau Projet dans l'Usine
 excerpt_separator: "<!--more-->"
 ---
 
-## Démarche
+## Construction & Déploiement des Applications 
+
+Les sources de nos projets sont gérés dans l'organisation GitHub [SofteamOuest](https://github.com/SofteamOuest/).
+
+Notre [Jenkins](jenkins.k8.wildwidewest.xyz) se synchronise automatiquement avec cette organisation.
+
+* Dès qu'un dépôt est créé sur GitHub, Jenkins crée un Job pour construire et déployer l'Application (Définition du Job basé sur le Jenkinsfile s'il existe)
+
+La fin de construction d'un Job Jenkins trigger le déploiement de l'Application (par exécution du Job [chart-run](https://jenkins.k8.wildwidewest.xyz/job/SofteamOuest/job/chart-run/)).
+
+## Mise en place d'une Application
 
 L'environnement de déploiement est un cluster Kubernetes.
 
-Il faut donc :
+Pour mettre en place le déploiement, il faut donc :
 
-* Choisir un nom adéquat au projet 
-* Créer un Dockerfile pour construire l'image (ou les images de l'application)
-* Créer un docker-compose.yml pour simplifier le démarrage de l'application sur le Poste de Dev.
-* Créer un chart [helm](https://helm.sh/) pour déployer l'application dans le cluster.
+* Intégrer au Projet, un Dockerfile pour construire l'image (ou les images de l'Application)
+* Intégrer au Projet, un docker-compose.yml pour simplifier le démarrage de l'Application sur le Poste de Dev.
+* Créer un chart [helm](https://helm.sh/) pour déployer l'Application dans le cluster.
 
 ## Création du Projet
 
-Les sources de nos projets sont gérés dans l'organisation GITHUB [SofteamOuest](https://github.com/SofteamOuest/).
+Convention de nommage des Projet :
 
-Convention de nommage des Projet : 
-
-* Si projet FRONT, le nom est *domaine_fonctionnel* suffixé de _ui 
+* Si projet FRONT, le nom est *domaine_fonctionnel* suffixé de _ui
 * Si projet BACK, le nom est *domaine_fonctionnel* suffixé de _api
+
+Le nom du domaine fonctionnel peut être par exemple le nom de la ressource gérée (exemple : users).
+
+Remarque : Ne pas préfixer les noms des applications avec des mots génériques comme "gestion".
 
 ## Création du Dockerfile
 
-Exemple de Dockerfile pour une application java 
+Exemple de Dockerfile pour une application java.
 
 ```
 FROM java:9
@@ -49,7 +60,7 @@ CMD java -jar monappli.jar
 
 Le docker-compose.yml simplifie la gestion des services docker.
 
-Pour construire les images Docker (de l'application) :
+Pour construire les images Docker (de l'Application) :
 
 ```bash
 docker-compose build
@@ -65,7 +76,7 @@ Pour arrêter les services :
 docker-compose stop
 ```
 
-Exemple de Dockerfile pour une application java avec une base de données PostgreSQL
+Exemple de Dockerfile pour une application java avec une base de données PostgreSQL.
 
 ```yaml
 version: '3.2'
@@ -100,6 +111,8 @@ Pour créer un chart helm il suffit d'exécuter à la racine du dépôt.
 helm create monappli
 ```
 
+Puis modifier les fichiers générés (cf. sections ci-dessous).
+
 ### Fichier values.yaml
 
 Liste des Modifications :
@@ -109,10 +122,10 @@ Liste des Modifications :
   * Le même nom que celui utilisé dans le docker-compose.yml
 * La conf SSL de l'Application (si Application accessible en dehors du Cluster)
 
-  * **ingress.enabled = true** => Création d'une ressource ingress pour que l'application soit accessible sur internet
-  * **ingress.hosts** => URL de l'application
-  * **ingress.secretName** => Nom du secret Kubernetes contenant les certificats de l'application
-* Les ressources allouées au conteneur déployé (à adapter à l'application)
+  * **ingress.enabled = true** => Création d'une ressource ingress pour que l'Application soit accessible sur internet
+  * **ingress.hosts** => URL de l'Application
+  * **ingress.secretName** => Nom du secret Kubernetes contenant les certificats de l'Application
+* Les ressources allouées au conteneur déployé (à adapter à l'Application)
 
 ```yaml
 image:
@@ -143,7 +156,7 @@ resources:
 
 Liste des modifications :
 
-* Intégrer le nom du secret Kubernetes contenant le login/mot de Nexus (pour le download des images Docker du cluster)  
+* Intégrer le nom du secret Kubernetes contenant le login/mot de Nexus (pour le download des images Docker)  
 
 ```yaml
     spec:
@@ -157,9 +170,39 @@ Liste des modifications :
       - name: regsecret
 ```
 
+## Release du package helm
+
+Pour qu'une version d'un package helm soit *visible* du cluster, il faut construire une version du package et le publier dans le repo helm.
+
+La release n'est pas encore industrialisée.
+
+Il faut vérifier la qualité des packages helm.
+
+```bash
+sh ./lint.sh
+```
+
+Il faut modifier la version du package a releaser (cf. fichier release.sh) 
+
+```bash
+version=0.1.43
+```
+
+Décommenter les packages à releaser.
+
+```bash
+helm package --version $version monappli
+```
+
+Effectuer la release.
+
+```bash
+sh ./release.sh
+```
+
 ## Création du Jenkinsfile
 
-La définition du Job Jenkins se fait via un Jenkinsfile (remplacer *monappli* par le vrai nom de l'application).
+La définition du Job Jenkins se fait via un Jenkinsfile (remplacer *monappli* par le vrai nom de l'Application).
 
 ```groovy
 #!groovy
@@ -244,3 +287,17 @@ podTemplate(label: 'monappli-pod', containers: [
 }
 
 ```
+
+## Vérification du Déploiement
+
+Après déploiement, se connecter en SSH sur le master (du cluster).
+
+Vérifier l'état du Pod "monappli"
+
+```bash
+[root@vps242131 ~]# kubectl get pod -l app=monappli -n dev
+NAME                           READY     STATUS    RESTARTS   AGE
+monappli-7bf958b897-ts9fc   1/1       Running   0          2h
+```
+
+Pour se connecter en SSH au cluster, il faut fournir à Mehdi une clef SSH publique pour qu'il l'enregistre dans les clefs autorisées par l'Usine. 
