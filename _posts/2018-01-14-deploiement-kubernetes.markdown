@@ -1,6 +1,6 @@
 ---
 title: Déploiement d'une application dans Kubernetes
-date: 2018-01-14 00:00:00 Z
+date: '2018-01-14 00:00:00 Z'
 layout: post
 description: Tutorial Kubernetes
 img: software-factory.jpg

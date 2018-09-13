@@ -1,6 +1,6 @@
 ---
 title: Projet MeltingPoc
-date: 2018-01-07 00:00:00 Z
+date: '2018-01-07 00:00:00 Z'
 layout: post
 description: Projet pour se former aux nouvelles technologies
 img: meltingpoc.png

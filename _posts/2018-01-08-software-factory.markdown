@@ -1,6 +1,6 @@
 ---
 title: Software Factory
-date: 2018-01-08 00:00:00 Z
+date: '2018-01-08 00:00:00 Z'
 layout: post
 description: Liens utiles de la communauté
 img: software-factory.jpg
